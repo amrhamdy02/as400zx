@@ -1,0 +1,50 @@
+Sub ReplaceAndExport()
+    Dim originalText As String
+    Dim replacementText As String
+    Dim originalFilePath As String
+    Dim newFilePath As String
+    Dim fileNumber As Integer
+    Dim originalData As String
+    Dim modifiedData As String
+    
+    ' Prompt the user to specify the original text
+    originalText = InputBox("Enter the original text:", "Original Text")
+    
+    ' Prompt the user to specify the replacement text
+    replacementText = InputBox("Enter the replacement text:", "Replacement Text")
+    
+    ' Get the original file path
+    originalFilePath = Application.GetOpenFilename(FileFilter:="AS/400 Macro Files (*.mac), *.mac", Title:="Select Original File")
+    
+    ' Check if the user canceled
+    If originalFilePath = "False" Then
+        MsgBox "Operation canceled."
+        Exit Sub
+    End If
+    
+    ' Get the new file path
+    newFilePath = Application.GetSaveAsFilename(Title:="Save As", FileFilter:="AS/400 Macro Files (*.mac), *.mac")
+    
+    ' Check if the user canceled
+    If newFilePath = "False" Then
+        MsgBox "Operation canceled."
+        Exit Sub
+    End If
+    
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
+    
+    ' Perform string replacement
+    modifiedData = Replace(originalData, originalText, replacementText) ' Replace original text with replacement text
+    
+    ' Save the modified data to a .mac file
+    fileNumber = FreeFile
+    Open newFilePath For Output As #fileNumber
+    Print #fileNumber, modifiedData
+    Close #fileNumber
+    
+    ' Inform the user
+    MsgBox "Data replaced and saved to '" & newFilePath & "'."
+End Sub
