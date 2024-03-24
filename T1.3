@@ -1,0 +1,68 @@
+Sub ReplaceAndExport()
+    Dim originalTexts() As String
+    Dim replacementTexts() As String
+    Dim originalFilePath As String
+    Dim newFilePath As String
+    Dim fileNumber As Integer
+    Dim originalData As String
+    Dim modifiedData As String
+    Dim i As Integer
+    
+    ' Prompt the user to specify the number of replacements
+    Dim numReplacements As Integer
+    numReplacements = Val(InputBox("Enter the number of replacements:", "Number of Replacements"))
+    
+    ' Check if the user canceled or entered an invalid number
+    If numReplacements <= 0 Then
+        MsgBox "Invalid number of replacements."
+        Exit Sub
+    End If
+    
+    ' Resize arrays to hold original and replacement text pairs
+    ReDim originalTexts(1 To numReplacements)
+    ReDim replacementTexts(1 To numReplacements)
+    
+    ' Prompt the user to specify the original and replacement text pairs
+    For i = 1 To numReplacements
+        originalTexts(i) = InputBox("Enter original text for replacement " & i & ":", "Original Text")
+        replacementTexts(i) = InputBox("Enter replacement text for replacement " & i & ":", "Replacement Text")
+    Next i
+    
+    ' Get the original file path
+    originalFilePath = Application.GetOpenFilename(FileFilter:="AS/400 Macro Files (*.mac), *.mac", Title:="Select Original File")
+    
+    ' Check if the user canceled
+    If originalFilePath = "False" Then
+        MsgBox "Operation canceled."
+        Exit Sub
+    End If
+    
+    ' Get the new file path
+    newFilePath = Application.GetSaveAsFilename(Title:="Save As", FileFilter:="AS/400 Macro Files (*.mac), *.mac")
+    
+    ' Check if the user canceled
+    If newFilePath = "False" Then
+        MsgBox "Operation canceled."
+        Exit Sub
+    End If
+    
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
+    
+    ' Perform string replacement for each original and replacement text pair
+    modifiedData = originalData
+    For i = 1 To numReplacements
+        modifiedData = Replace(modifiedData, originalTexts(i), replacementTexts(i)) ' Replace original text with replacement text
+    Next i
+    
+    ' Save the modified data to a .mac file
+    fileNumber = FreeFile
+    Open newFilePath For Output As #fileNumber
+    Print #fileNumber, modifiedData
+    Close #fileNumber
+    
+    ' Inform the user
+    MsgBox "Data replaced and saved to '" & newFilePath & "'."
+End Sub
