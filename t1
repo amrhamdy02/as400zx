@@ -1,26 +1,12 @@
 Sub ReplaceAndExport()
-    Dim ws As Worksheet
-    Dim dataRange As Range
-    Dim originalTexts As Variant
-    Dim replacementTexts As Variant
-    Dim replacedText As String
-    Dim i As Integer, j As Integer
     Dim originalFilePath As String
     Dim newFilePath As String
     Dim fileNumber As Integer
-    
-    ' Set the worksheet
-    Set ws = ThisWorkbook.ActiveSheet
-    
-    ' Set the range containing data
-    Set dataRange = ws.Range("A1:B" & ws.Cells(ws.Rows.Count, "A").End(xlUp).Row)
-    
-    ' Define arrays of original strings and replacement strings
-    originalTexts = Array("old1", "old2", "old3") ' Add more strings as needed
-    replacementTexts = Array("new1", "new2", "new3") ' Corresponding replacement strings
+    Dim originalData As String
+    Dim modifiedData As String
     
     ' Get the original file path
-    originalFilePath = Application.GetOpenFilename(FileFilter:="Excel Files (*.xlsx), *.xlsx", Title:="Select Original File")
+    originalFilePath = Application.GetOpenFilename(FileFilter:="AS/400 Macro Files (*.mac), *.mac", Title:="Select Original File")
     
     ' Check if the user canceled
     If originalFilePath = "False" Then
@@ -29,7 +15,7 @@ Sub ReplaceAndExport()
     End If
     
     ' Get the new file path
-    newFilePath = Application.GetSaveAsFilename(Title:="Save As", FileFilter:="Text Files (*.txt), *.txt")
+    newFilePath = Application.GetSaveAsFilename(Title:="Save As", FileFilter:="AS/400 Macro Files (*.mac), *.mac")
     
     ' Check if the user canceled
     If newFilePath = "False" Then
@@ -37,34 +23,21 @@ Sub ReplaceAndExport()
         Exit Sub
     End If
     
-    ' Open the original workbook
-    Workbooks.Open originalFilePath
-    Set ws = ActiveSheet
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
     
-    ' Loop through each cell in the data range
-    For Each cell In dataRange
-        ' Initialize replaced text with original text
-        replacedText = cell.Value
-        ' Loop through each original string
-        For i = LBound(originalTexts) To UBound(originalTexts)
-            ' Replace the original string with the corresponding replacement string
-            replacedText = Replace(replacedText, originalTexts(i), replacementTexts(i))
-        Next i
-        ' Write the replaced text to the adjacent cell in the third column
-        cell.Offset(0, 2).Value = replacedText
-    Next cell
+    ' Perform string replacement
+    modifiedData = Replace(originalData, "old", "new") ' Replace "old" with "new"
     
-    ' Save the modified data to a text file
+    ' Save the modified data to a .mac file
     fileNumber = FreeFile
     Open newFilePath For Output As #fileNumber
-    For Each cell In dataRange.Columns(3).Cells ' Third column contains replaced text
-        Print #fileNumber, cell.Value
-    Next cell
+    Print #fileNumber, modifiedData
     Close #fileNumber
-    
-    ' Close the original workbook without saving changes
-    ActiveWorkbook.Close False
     
     ' Inform the user
     MsgBox "Data replaced and saved to '" & newFilePath & "'."
 End Sub
+
