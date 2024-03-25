@@ -7,6 +7,7 @@ Sub ChangeUserIDAndRole()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
+    Dim xlApp As Object
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -15,10 +16,10 @@ Sub ChangeUserIDAndRole()
     newUserID = InputBox("Enter the new value for USERID:", "New USERID")
     
     ' Prompt the user to specify the role ("MK" for maker or "CH" for checker)
-    newRole = UCase(InputBox("Enter the role ('MK' for maker or 'CH' for checker):", "Role"))
+    newRole = InputBox("Enter the role ('MK' for maker or 'CH' for checker):", "Role")
     
     ' Validate the input role
-    If newRole <> "CH" And newRole <> "MK" Then
+    If UCase(newRole) <> "CH" And UCase(newRole) <> "MK" Then
         MsgBox "Invalid role. Please enter 'CH' for checker or 'MK' for maker."
         Exit Sub
     End If
@@ -44,6 +45,15 @@ Sub ChangeUserIDAndRole()
     Print #fileNumber, modifiedData
     Close #fileNumber
     
+    ' Close the Excel application
+    On Error Resume Next
+    Set xlApp = GetObject(, "Excel.Application")
+    If Not xlApp Is Nothing Then
+        xlApp.Quit
+        Set xlApp = Nothing
+    End If
+    On Error GoTo 0
+    
     ' Inform the user
-    MsgBox "Data replaced and saved to '" & newFileName & "'."
+    MsgBox "Data replaced and saved to '" & newFileName & "'." & vbCrLf & "Excel application has been closed."
 End Sub
