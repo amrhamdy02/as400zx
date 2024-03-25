@@ -7,7 +7,6 @@ Sub ChangeUserIDAndRole()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
-    Dim UserForm As Object
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -15,17 +14,14 @@ Sub ChangeUserIDAndRole()
     ' Prompt the user to specify the new value for USERID
     newUserID = InputBox("Enter the new value for USERID:", "New USERID")
     
-    ' Display the user form to select the role
-    Set UserForm = VBA.UserForms.Add("UserForm1")
-    UserForm.Show vbModeless
+    ' Prompt the user to specify the role ("MK" for maker or "CH" for checker)
+    newRole = InputBox("Enter the role ('MK' for maker or 'CH' for checker):", "Role")
     
-    ' Wait until the user form is closed
-    Do While UserForm.Visible
-        DoEvents
-    Loop
-    
-    ' Get the selected role from the user form
-    newRole = UserForm.cmbRole.Value
+    ' Validate the input role
+    If UCase(newRole) <> "CH" And UCase(newRole) <> "MK" Then
+        MsgBox "Invalid role. Please enter 'CH' for checker or 'MK' for maker."
+        Exit Sub
+    End If
     
     ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
@@ -40,7 +36,7 @@ Sub ChangeUserIDAndRole()
     
     ' Perform string replacement for USERID and ROLE
     modifiedData = Replace(originalData, "USERID", newUserID) ' Replace USERID
-    modifiedData = Replace(modifiedData, "ROLE", IIf(newRole = "Maker", "MK", "CH")) ' Replace ROLE with MK or CH based on the selected role
+    modifiedData = Replace(modifiedData, "ROLE", newRole) ' Replace ROLE with the inputted role
     
     ' Save the modified data to the new file
     fileNumber = FreeFile
