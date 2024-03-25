@@ -7,6 +7,7 @@ Sub ChangeUserIDAndRole()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
+    Dim UserForm As Object
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -15,15 +16,16 @@ Sub ChangeUserIDAndRole()
     newUserID = InputBox("Enter the new value for USERID:", "New USERID")
     
     ' Display the user form to select the role
-    UserForm1.Show vbModeless
+    Set UserForm = VBA.UserForms.Add("UserForm1")
+    UserForm.Show vbModeless
     
     ' Wait until the user form is closed
-    Do While UserForm1.Visible
+    Do While UserForm.Visible
         DoEvents
     Loop
     
     ' Get the selected role from the user form
-    newRole = UserForm1.cmbRole.Value
+    newRole = UserForm.cmbRole.Value
     
     ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
