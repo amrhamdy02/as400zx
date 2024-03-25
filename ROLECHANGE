@@ -7,7 +7,6 @@ Sub ChangeUserIDAndRole()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
-    Dim xlApp As Object
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -45,15 +44,6 @@ Sub ChangeUserIDAndRole()
     Print #fileNumber, modifiedData
     Close #fileNumber
     
-    ' Close the Excel application
-    On Error Resume Next
-    Set xlApp = GetObject(, "Excel.Application")
-    If Not xlApp Is Nothing Then
-        xlApp.Quit
-        Set xlApp = Nothing
-    End If
-    On Error GoTo 0
-    
     ' Inform the user
-    MsgBox "Data replaced and saved to '" & newFileName & "'." & vbCrLf & "Excel application has been closed."
+    MsgBox "Data replaced and saved to '" & newFileName & "'."
 End Sub
