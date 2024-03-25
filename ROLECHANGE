@@ -1,0 +1,49 @@
+Sub ChangeUserIDAndRole()
+    Dim newUserID As String
+    Dim newRole As String
+    Dim originalFilePath As String
+    Dim newFilePath As String
+    Dim fileNumber As Integer
+    Dim originalData As String
+    Dim modifiedData As String
+    
+    ' Prompt the user to specify the new value for USERID
+    newUserID = InputBox("Enter the new value for USERID:", "New USERID")
+    
+    ' Prompt the user to select the role
+    newRole = ""
+    Do While newRole <> "maker" And newRole <> "checker"
+        newRole = InputBox("Select the role ('maker' or 'checker'):", "Role Selection")
+        newRole = LCase(newRole) ' Convert to lowercase for case-insensitive comparison
+    Loop
+    
+    ' Specify the path for the original file
+    originalFilePath = "C:\Path\To\Original\File.txt" ' Change this to your actual file path
+    
+    ' Get the new file path and filename from the user
+    newFilePath = Application.GetSaveAsFilename(Title:="Save As", FileFilter:="Text Files (*.txt), *.txt", InitialFileName:="NewFile.txt")
+    
+    ' Check if the user canceled
+    If newFilePath = "False" Then
+        MsgBox "Operation canceled."
+        Exit Sub
+    End If
+    
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
+    
+    ' Perform string replacement for USERID and ROLE
+    modifiedData = Replace(originalData, "USERID", newUserID) ' Replace USERID
+    modifiedData = Replace(modifiedData, "ROLE", IIf(newRole = "maker", "MK", "CH")) ' Replace ROLE with MK or CH based on the selected role
+    
+    ' Save the modified data to the new file
+    fileNumber = FreeFile
+    Open newFilePath For Output As #fileNumber
+    Print #fileNumber, modifiedData
+    Close #fileNumber
+    
+    ' Inform the user
+    MsgBox "Data replaced and saved to '" & newFilePath & "'."
+End Sub
