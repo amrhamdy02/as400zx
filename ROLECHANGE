@@ -15,10 +15,10 @@ Sub ChangeUserIDAndRole()
     newUserID = InputBox("Enter the new value for USERID:", "New USERID")
     
     ' Prompt the user to specify the role ("MK" for maker or "CH" for checker)
-    newRole = InputBox("Enter the role ('MK' for maker or 'CH' for checker):", "Role")
+    newRole = UCase(InputBox("Enter the role ('MK' for maker or 'CH' for checker):", "Role"))
     
     ' Validate the input role
-    If UCase(newRole) <> "CH" And UCase(newRole) <> "MK" Then
+    If newRole <> "CH" And newRole <> "MK" Then
         MsgBox "Invalid role. Please enter 'CH' for checker or 'MK' for maker."
         Exit Sub
     End If
