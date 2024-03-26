@@ -35,10 +35,9 @@ Sub ChangeUserInfo()
     
     ' Loop to create multiple users
     For i = 1 To numUsers
-        If i = 1 Then
-            ' Remove the "sub subSub1_()" and "end sub" statements from the first iteration
-            modifiedData = Replace(originalData, "sub subSub1_()", "") ' Remove "sub subSub1_()"
-            modifiedData = Replace(modifiedData, "end sub", "") ' Remove "end sub"
+        ' Remove the 'Sub subSub1_()' if it's not the first iteration
+        If i > 1 Then
+            modifiedData = Replace(modifiedData, "Sub subSub1_()", "")
         End If
         
         ' Prompt the user to specify the new value for USERID
@@ -70,6 +69,11 @@ Sub ChangeUserInfo()
         modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
         modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
         modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
+        
+        ' Remove the 'End Sub' if it's not the last iteration
+        If i < numUsers Then
+            modifiedData = Replace(modifiedData, "End Sub", "")
+        End If
         
         ' Append the modified data to the output file
         Print #fileNumber, modifiedData
