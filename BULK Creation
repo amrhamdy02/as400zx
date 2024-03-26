@@ -14,10 +14,16 @@ Sub ChangeUserInfo()
     Dim directoryPath As String
     
     ' Hardcoded path for the original file
-    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
+    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
     
     ' Prompt the user to specify the number of users to create
     numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
+    
+    ' Prompt the user to specify today's date in YYYYMMDD format
+    newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
+    
+    ' Prompt the user to specify the value for MIRRORUSER
+    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
     
     ' Prompt the user to specify the output file path
     outputFile = InputBox("Enter the path for the output file (including file name and extension):", "Output File Path")
@@ -40,12 +46,6 @@ Sub ChangeUserInfo()
         
         ' Prompt the user to specify the new value for USERNAME
         newUsername = InputBox("Enter the new value for USERNAME for user " & i & ":", "New USERNAME")
-        
-        ' Prompt the user to specify the new value for TODAYDATE
-        newDate = InputBox("Enter today's date in YYYYMMDD format for user " & i & ":", "Today's Date")
-        
-        ' Prompt the user to specify the new value for MIRRORUSER
-        newMirrorUser = InputBox("Enter the new value for MIRRORUSER for user " & i & ":", "New MIRRORUSER")
         
         ' Read the original data from the file
         Open originalFilePath For Input As #1
