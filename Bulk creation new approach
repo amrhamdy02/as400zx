@@ -1,74 +1,57 @@
-Option Explicit
-
-Sub ModifyMacFile()
-    Dim numIterations As Integer
-    Dim i As Integer
+Sub RunMacroMultipleTimes()
+    Dim macroText As String
     Dim newUserID1 As String
     Dim newUserID2 As String
     Dim newUsername As String
-    Dim newDate As String
     Dim newMirrorUser As String
+    Dim newTodayDate As String
     Dim originalFilePath As String
-    Dim newFilePath As String
-    Dim fileNumber As Integer
-    Dim originalData As String
-    Dim modifiedData As String
-    Dim directoryPath As String
     
-    ' Prompt the user for the number of iterations
-    numIterations = InputBox("Enter the number of times you want to run the modification:", "Number of Iterations")
-    If Not IsNumeric(numIterations) Then
-        MsgBox "Please enter a valid number.", vbExclamation
-        Exit Sub
-    End If
+    ' Set new values for placeholders
+    newUserID1 = "NewUserID1"
+    newUserID2 = "NewUserID2"
+    newUsername = "Please insert User full name"
+    newMirrorUser = "NewMirrorUser"
+    newTodayDate = "NewTodayDate"
     
-    ' Prompt the user to specify MIRRORUSER and TODAYDATE
-    newMirrorUser = InputBox("Enter the new value for MIRRORUSER:", "New MIRRORUSER")
-    newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
-    
-    ' Prompt the user to specify the original file
+    ' Set the path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
-    If Dir(originalFilePath) = "" Then
-        MsgBox "Original file not found. Please make sure the file exists.", vbExclamation
-        Exit Sub
-    End If
     
-    ' Get the directory path of the original file
-    directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
+    ' Read the macro text from the original file
+    macroText = ReadMacroFromFile(originalFilePath)
     
-    ' Read the original data from the file
-    Open originalFilePath For Input As #1
-    originalData = Input$(LOF(1), #1)
-    Close #1
+    ' Replace placeholders with new values
+    macroText = Replace(macroText, "USERID1", newUserID1)
+    macroText = Replace(macroText, "USERID2", newUserID2)
+    macroText = Replace(macroText, "USERNAME", newUsername)
+    macroText = Replace(macroText, "MIRRORUSER", newMirrorUser)
+    macroText = Replace(macroText, "TODAYDATE", newTodayDate)
     
-    ' Perform string replacement for MIRRORUSER and TODAYDATE
-    modifiedData = Replace(originalData, "MIRRORUSER", newMirrorUser)
-    modifiedData = Replace(modifiedData, "TODAYDATE", newDate)
+    ' Run the modified macro
+    RunMacro macroText
+End Sub
+
+Function ReadMacroFromFile(filePath As String) As String
+    Dim fileNum As Integer
+    Dim fileContent As String
     
-    ' Prompt the user to specify the new values for USERID for each iteration
-    For i = 1 To numIterations
-        newUserID1 = InputBox("Enter the new value for USERID1 (2 characters) - Iteration " & i & ":", "New USERID1")
-        newUserID2 = InputBox("Enter the new value for USERID2 (2 characters) - Iteration " & i & ":", "New USERID2")
-        newUsername = InputBox("Enter the new value for USERNAME - Iteration " & i & ":", "New USERNAME")
-        
-        ' Perform string replacement for USERID1 and USERID2
-        modifiedData = Replace(modifiedData, "USERID1", newUserID1)
-        modifiedData = Replace(modifiedData, "USERID2", newUserID2)
-        
-        ' Save the modified data to the new file
-        newFilePath = directoryPath & Replace(newMirrorUser & "BULK", " ", "_") & ".mac"
-        If i > 1 Then
-            ' Append the modified data to the existing file
-            Open newFilePath For Append As #fileNumber
-        Else
-            ' Create a new file for the first iteration
-            fileNumber = FreeFile
-            Open newFilePath For Output As #fileNumber
-        End If
-        Print #fileNumber, modifiedData
-        Close #fileNumber
-    Next i
+    ' Open the file for reading
+    fileNum = FreeFile
+    Open filePath For Input As fileNum
     
-    ' Inform the user
-    MsgBox "Modification completed. " & numIterations & " files created.", vbInformation
+    ' Read the contents of the file
+    fileContent = Input$(LOF(fileNum), fileNum)
+    
+    ' Close the file
+    Close fileNum
+    
+    ReadMacroFromFile = fileContent
+End Function
+
+Sub RunMacro(macroText As String)
+    ' Paste your macro code here
+    ' For example:
+    ' Application.Run "YourMacroName"
+    ' or execute the macro text directly
+    ' Application.ExecuteExcel4Macro macroText
 End Sub
