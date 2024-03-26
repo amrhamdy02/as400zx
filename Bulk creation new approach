@@ -1,5 +1,6 @@
 Sub EditMacroParametersAndSave()
     Dim macroText As String
+    Dim newUserID As String
     Dim newUserID1 As String
     Dim newUserID2 As String
     Dim newUsername As String
@@ -16,8 +17,14 @@ Sub EditMacroParametersAndSave()
     macroText = ReadMacroFromFile(originalFilePath)
     
     ' Prompt the user to enter new values for parameters
-    newUserID1 = InputBox("Enter new value for USERID1:", "Edit Parameters")
-    newUserID2 = InputBox("Enter new value for USERID2:", "Edit Parameters")
+    newUserID = InputBox("Enter new value for USERID (4 characters):", "Edit Parameters")
+    If Len(newUserID) <> 4 Then
+        MsgBox "USERID must be 4 characters long. Please try again.", vbExclamation
+        Exit Sub
+    End If
+    newUserID1 = Left(newUserID, 2)
+    newUserID2 = Right(newUserID, 2)
+    
     newUsername = InputBox("Enter new value for USERNAME:", "Edit Parameters")
     newMirrorUser = InputBox("Enter new value for MIRRORUSER:", "Edit Parameters")
     newTodayDate = InputBox("Enter new value for TODAYDATE:", "Edit Parameters")
@@ -60,11 +67,3 @@ Sub WriteMacroToFile(macroText As String, filePath As String)
     
     ' Open the file for writing
     fileNum = FreeFile
-    Open filePath For Output As fileNum
-    
-    ' Write the modified macro text to the file
-    Print #fileNum, macroText
-    
-    ' Close the file
-    Close fileNum
-End Sub
