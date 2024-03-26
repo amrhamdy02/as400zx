@@ -1,90 +1,69 @@
-Sub ChangeUserInfo()
-    Dim numUsers As Integer
+Option Explicit
+
+Sub ModifyMacFile()
+    Dim numIterations As Integer
     Dim i As Integer
+    
+    ' Prompt the user for the number of iterations
+    numIterations = InputBox("Enter the number of times you want to run the modification:", "Number of Iterations")
+    If Not IsNumeric(numIterations) Then
+        MsgBox "Please enter a valid number.", vbExclamation
+        Exit Sub
+    End If
+    
+    For i = 1 To numIterations
+        ModifyOnce i
+    Next i
+    
+    ' Inform the user
+    MsgBox "Modification completed. " & numIterations & " files created.", vbInformation
+End Sub
+
+Sub ModifyOnce(iteration As Integer)
     Dim newUserID1 As String
     Dim newUserID2 As String
     Dim newUsername As String
     Dim newDate As String
     Dim newMirrorUser As String
     Dim originalFilePath As String
-    Dim outputFile As String
+    Dim newFilePath As String
     Dim fileNumber As Integer
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
     
-    ' Hardcoded path for the original file
-    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
+    ' Prompt the user to specify the new values
+    newUserID1 = InputBox("Enter the new value for USERID1 (2 characters) - Iteration " & iteration & ":", "New USERID1")
+    newUserID2 = InputBox("Enter the new value for USERID2 (2 characters) - Iteration " & iteration & ":", "New USERID2")
+    newUsername = InputBox("Enter the new value for USERNAME - Iteration " & iteration & ":", "New USERNAME")
+    newDate = InputBox("Enter today's date in YYYYMMDD format - Iteration " & iteration & ":", "Today's Date")
+    newMirrorUser = InputBox("Enter the new value for MIRRORUSER - Iteration " & iteration & ":", "New MIRRORUSER")
     
-    ' Extract the directory path from the original file path
+    ' Prompt the user to specify the original file
+    originalFilePath = Application.GetOpenFilename("Text Files (*.mac), *.mac", , "Select the original .mac file for Iteration " & iteration)
+    If originalFilePath = "False" Then Exit Sub ' User cancelled
+    
+    ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
     
-    ' Prompt the user to specify the number of users to create
-    numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
+    ' Create the new filename based on the inputted values and iteration number
+    newFilePath = directoryPath & Replace(newMirrorUser & "_" & iteration, " ", "_") & ".mac"
     
-    ' Prompt the user to specify today's date in YYYYMMDD format
-    newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
     
-    ' Prompt the user to specify the value for MIRRORUSER
-    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
+    ' Perform string replacement for USERID1, USERID2, USERNAME, TODAYDATE, and MIRRORUSER
+    modifiedData = Replace(originalData, "USERID1", newUserID1)
+    modifiedData = Replace(modifiedData, "USERID2", newUserID2)
+    modifiedData = Replace(modifiedData, "USERNAME", newUsername)
+    modifiedData = Replace(modifiedData, "TODAYDATE", newDate)
+    modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser)
     
-    ' Set the output file path and name
-    outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
-    
-    ' Open the output file
-    On Error Resume Next
+    ' Save the modified data to the new file
     fileNumber = FreeFile
-    Open outputFile For Output As #fileNumber
-    If Err.Number <> 0 Then
-        MsgBox "Error: Unable to open the output file for writing. Please make sure the path is correct and you have permission to write to the file."
-        Exit Sub
-    End If
-    On Error GoTo 0
-    
-    ' Loop to create multiple users
-    For i = 1 To numUsers
-        ' Prompt the user to specify the new value for USERID
-        newUserID = InputBox("Enter the new value for USERID (4 characters) for user " & i & ":", "New USERID")
-        
-        ' Splitting USERID into two parts
-        newUserID1 = Left(newUserID, 2)
-        newUserID2 = Right(newUserID, 2)
-        
-        ' Prompt the user to specify the new value for USERNAME
-        newUsername = InputBox("Enter the new value for USERNAME for user " & i & ":", "New USERNAME")
-        
-        ' Read the original data from the file
-        On Error Resume Next ' Ignore error if the original file doesn't exist
-        Open originalFilePath For Input As #1
-        If Err.Number <> 0 Then
-            MsgBox "Error: Unable to open the original file for reading. Please make sure the file exists."
-            Close #fileNumber
-            Exit Sub
-        End If
-        On Error GoTo 0 ' Turn off error handling
-        
-        originalData = Input$(LOF(1), #1)
-        Close #1
-        
-        ' Perform string replacement for USERID1, USERID2, USERNAME, TODAYDATE, and MIRRORUSER
-        modifiedData = Replace(originalData, "USERID1", newUserID1) ' Replace USERID1
-        modifiedData = Replace(modifiedData, "USERID2", newUserID2) ' Replace USERID2
-        modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
-        modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
-        modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
-        
-        ' Append the modified data to the output file
-        Print #fileNumber, modifiedData
-        
-        ' Add "end sub" at the end of the last iteration
-        If i = numUsers Then
-            Print #fileNumber, "end sub"
-        End If
-        
-        ' Inform the user
-        MsgBox "Data for user " & i & " replaced and appended to the output file."
-    Next i
-    
-    ' Close the output file
+    Open newFilePath For Output As #fileNumber
+    Print #fileNumber, modifiedData
     Close #fileNumber
 End Sub
