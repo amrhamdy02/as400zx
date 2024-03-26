@@ -9,18 +9,18 @@ Sub EditMacroParametersAndSave()
     Dim newFilePath As String
     Dim modifiedMacroText As String
     
-    ' Set new values for placeholders
-    newUserID1 = "NewUserID1"
-    newUserID2 = "NewUserID2"
-    newUsername = "Please insert User full name"
-    newMirrorUser = "NewMirrorUser"
-    newTodayDate = "NewTodayDate"
-    
     ' Set the path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
     
     ' Read the macro text from the original file
     macroText = ReadMacroFromFile(originalFilePath)
+    
+    ' Prompt the user to enter new values for parameters
+    newUserID1 = InputBox("Enter new value for USERID1:", "Edit Parameters")
+    newUserID2 = InputBox("Enter new value for USERID2:", "Edit Parameters")
+    newUsername = InputBox("Enter new value for USERNAME:", "Edit Parameters")
+    newMirrorUser = InputBox("Enter new value for MIRRORUSER:", "Edit Parameters")
+    newTodayDate = InputBox("Enter new value for TODAYDATE:", "Edit Parameters")
     
     ' Replace placeholders with new values
     modifiedMacroText = Replace(macroText, "USERID1", newUserID1)
