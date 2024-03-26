@@ -14,11 +14,11 @@ Sub ChangeUserInfo()
     Dim directoryPath As String
     
     ' Hardcoded path for the original file
-    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
+    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
     
     ' Extract the directory path from the original file path
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
-    
+
     ' Set the output file path and name
     newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
     outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
@@ -39,27 +39,4 @@ Sub ChangeUserInfo()
         newUserID = InputBox("Enter the new value for USERID (4 characters) for user " & i & ":", "New USERID")
         
         ' Splitting USERID into two parts
-        newUserID1 = Left(newUserID, 2)
-        newUserID2 = Right(newUserID, 2)
-        
-        ' Prompt the user to specify the new value for USERNAME
-        newUsername = InputBox("Enter the new value for USERNAME for user " & i & ":", "New USERNAME")
-        
-        ' Read the original data from the file
-        On Error Resume Next ' Ignore error if the original file doesn't exist
-        Open originalFilePath For Input As #1
-        If Err.Number <> 0 Then
-            MsgBox "Error: Unable to open the original file for reading. Please make sure the file exists."
-            Close #fileNumber
-            Exit Sub
-        End If
-        On Error GoTo 0 ' Turn off error handling
-        
-        originalData = Input$(LOF(1), #1)
-        Close #1
-        
-        ' Perform string replacement for USERID1, USERID2, USERNAME, TODAYDATE, and MIRRORUSER
-        modifiedData = Replace(originalData, "USERID1", newUserID1) ' Replace USERID1
-        modifiedData = Replace(modifiedData, "USERID2", newUserID2) ' Replace USERID2
-        modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
-        modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Re
+        newUserID1 = Left
