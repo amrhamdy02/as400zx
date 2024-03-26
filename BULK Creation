@@ -12,7 +12,6 @@ Sub ChangeUserInfo()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
-    Dim isFirstIteration As Boolean
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -72,22 +71,21 @@ Sub ChangeUserInfo()
         End If
         
         ' Remove "end sub" at the end of the first iteration
-        isFirstIteration = (i = 1)
-        If isFirstIteration Then
+        If i = 1 Then
             modifiedData = Replace(modifiedData, "end sub", "")
         End If
         
         ' Append the modified data to the output file
         Print #fileNumber, modifiedData
         
-        ' Add "end sub" at the end of the last iteration
-        If i = numUsers Then
-            Print #fileNumber, "end sub"
-        End If
-        
         ' Inform the user
         MsgBox "Data for user " & i & " replaced and appended to the output file."
     Next i
+    
+    ' Add "end sub" at the end of the last iteration
+    If numUsers > 0 Then
+        Print #fileNumber, "end sub"
+    End If
     
     ' Close the output file
     Close #fileNumber
