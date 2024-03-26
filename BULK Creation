@@ -16,20 +16,18 @@ Sub ChangeUserInfo()
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
     
+    ' Extract the directory path from the original file path
+    directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
+    
+    ' Set the output file path and name
+    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
+    outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
+    
     ' Prompt the user to specify the number of users to create
     numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
     
     ' Prompt the user to specify today's date in YYYYMMDD format
     newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
-    
-    ' Prompt the user to specify the value for MIRRORUSER
-    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
-    
-    ' Prompt the user to specify the output file path
-    outputFile = InputBox("Enter the path for the output file (including file name and extension):", "Output File Path")
-    
-    ' Get the directory path of the original file
-    directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
     
     ' Open the output file
     fileNumber = FreeFile
