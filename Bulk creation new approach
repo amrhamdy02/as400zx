@@ -1,0 +1,56 @@
+Option Explicit
+
+Sub ModifyMacFile()
+    Dim numIterations As Integer
+    Dim newMirrorUser As String
+    Dim newDate As String
+    Dim originalFilePath As String
+    Dim fileNumber As Integer
+    Dim originalData As String
+    Dim modifiedData As String
+    Dim directoryPath As String
+    Dim i As Integer
+    
+    ' Prompt the user for the number of iterations
+    numIterations = InputBox("Enter the number of times you want to run the modification:", "Number of Iterations")
+    If Not IsNumeric(numIterations) Then
+        MsgBox "Please enter a valid number.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Prompt the user for MIRRORUSER and TODAYDATE
+    newMirrorUser = InputBox("Enter the new value for MIRRORUSER:", "New MIRRORUSER")
+    newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
+    
+    ' Hardcoded original file path
+    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
+    
+    ' Get the directory path of the original file
+    directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
+    
+    For i = 1 To numIterations
+        ' Create the new filename based on the MIRRORUSER value and iteration number
+        Dim newFileName As String
+        newFileName = directoryPath & Replace(newMirrorUser & "BULK" & i, " ", "_") & ".mac"
+        
+        ' Read the original data from the file
+        Open originalFilePath For Input As #1
+        originalData = Input$(LOF(1), #1)
+        Close #1
+        
+        ' Perform string replacement for USERID, USERNAME, TODAYDATE, and MIRRORUSER
+        modifiedData = Replace(originalData, "USERID1", Mid(newMirrorUser, 1, 2))
+        modifiedData = Replace(modifiedData, "USERID2", Mid(newMirrorUser, 3, 2))
+        modifiedData = Replace(modifiedData, "TODAYDATE", newDate)
+        modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser)
+        
+        ' Save the modified data to the new file
+        fileNumber = FreeFile
+        Open newFileName For Output As #fileNumber
+        Print #fileNumber, modifiedData
+        Close #fileNumber
+    Next i
+    
+    ' Inform the user
+    MsgBox "Modification completed. " & numIterations & " files created.", vbInformation
+End Sub
