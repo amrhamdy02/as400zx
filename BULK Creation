@@ -66,26 +66,21 @@ Sub ChangeUserInfo()
         modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
         
         ' Remove "sub subSub1_()" at the start of the second iteration
-        If i = 2 Then
+        If i > 1 Then
             modifiedData = Replace(modifiedData, "sub subSub1_()", "")
-        End If
-        
-        ' Remove "end sub" at the end of the first iteration
-        If i = 1 Then
-            modifiedData = Replace(modifiedData, "end sub", "")
         End If
         
         ' Append the modified data to the output file
         Print #fileNumber, modifiedData
         
+        ' Add "end sub" at the end of the last iteration
+        If i = numUsers Then
+            Print #fileNumber, "end sub"
+        End If
+        
         ' Inform the user
         MsgBox "Data for user " & i & " replaced and appended to the output file."
     Next i
-    
-    ' Add "end sub" at the end of the last iteration
-    If numUsers > 0 Then
-        Print #fileNumber, "end sub"
-    End If
     
     ' Close the output file
     Close #fileNumber
