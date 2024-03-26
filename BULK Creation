@@ -7,7 +7,7 @@ Sub ChangeUserInfo()
     Dim newDate As String
     Dim newMirrorUser As String
     Dim originalFilePath As String
-    Dim newFileName As String
+    Dim outputFile As String
     Dim fileNumber As Integer
     Dim originalData As String
     Dim modifiedData As String
@@ -19,8 +19,15 @@ Sub ChangeUserInfo()
     ' Prompt the user to specify the number of users to create
     numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
     
+    ' Prompt the user to specify the output file path
+    outputFile = InputBox("Enter the path for the output file (including file name and extension):", "Output File Path")
+    
     ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
+    
+    ' Open the output file
+    fileNumber = FreeFile
+    Open outputFile For Output As #fileNumber
     
     ' Loop to create multiple users
     For i = 1 To numUsers
@@ -40,9 +47,6 @@ Sub ChangeUserInfo()
         ' Prompt the user to specify the new value for MIRRORUSER
         newMirrorUser = InputBox("Enter the new value for MIRRORUSER for user " & i & ":", "New MIRRORUSER")
         
-        ' Create the new filename based on the inputted USERID
-        newFileName = directoryPath & Replace(newUserID1 & newUserID2 & newUsername & newDate & newMirrorUser & "_" & i, " ", "_") & ".mac"
-        
         ' Read the original data from the file
         Open originalFilePath For Input As #1
         originalData = Input$(LOF(1), #1)
@@ -55,15 +59,13 @@ Sub ChangeUserInfo()
         modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
         modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
         
-        ' Save the modified data to the new file
-        fileNumber = FreeFile
-        Open newFileName For Output As #fileNumber
+        ' Append the modified data to the output file
         Print #fileNumber, modifiedData
-        Close #fileNumber
         
         ' Inform the user
-        MsgBox "Data replaced and saved to '" & newFileName & "'."
+        MsgBox "Data for user " & i & " replaced and appended to the output file."
     Next i
     
-    ' Add End Sub after the loop finishes
-    End Sub
+    ' Close the output file
+    Close #fileNumber
+End Sub
