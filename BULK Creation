@@ -14,20 +14,22 @@ Sub ChangeUserInfo()
     Dim directoryPath As String
     
     ' Hardcoded path for the original file
-    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
+    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
     
     ' Extract the directory path from the original file path
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
-    
-    ' Set the output file path and name
-    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
-    outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
-    
+
     ' Prompt the user to specify the number of users to create
     numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
     
     ' Prompt the user to specify today's date in YYYYMMDD format
     newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
+    
+    ' Prompt the user to specify the value for MIRRORUSER
+    newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
+    
+    ' Set the output file path and name
+    outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
     
     ' Open the output file
     fileNumber = FreeFile
@@ -64,11 +66,6 @@ Sub ChangeUserInfo()
         modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
         modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
         modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
-        
-        ' Remove "sub subSub1_()" at the start of the second iteration
-        If i > 1 Then
-            modifiedData = Replace(modifiedData, "sub subSub1_()", "")
-        End If
         
         ' Append the modified data to the output file
         Print #fileNumber, modifiedData
