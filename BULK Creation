@@ -46,7 +46,15 @@ Sub ChangeUserInfo()
         newUsername = InputBox("Enter the new value for USERNAME for user " & i & ":", "New USERNAME")
         
         ' Read the original data from the file
+        On Error Resume Next ' Ignore error if the original file doesn't exist
         Open originalFilePath For Input As #1
+        If Err.Number <> 0 Then
+            MsgBox "Error: Unable to open the original file for reading. Please make sure the file exists."
+            Close #fileNumber
+            Exit Sub
+        End If
+        On Error GoTo 0 ' Turn off error handling
+        
         originalData = Input$(LOF(1), #1)
         Close #1
         
@@ -54,16 +62,4 @@ Sub ChangeUserInfo()
         modifiedData = Replace(originalData, "USERID1", newUserID1) ' Replace USERID1
         modifiedData = Replace(modifiedData, "USERID2", newUserID2) ' Replace USERID2
         modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
-        modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
-        modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
-        
-        ' Append the modified data to the output file
-        Print #fileNumber, modifiedData
-        
-        ' Inform the user
-        MsgBox "Data for user " & i & " replaced and appended to the output file."
-    Next i
-    
-    ' Close the output file
-    Close #fileNumber
-End Sub
+        modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Re
