@@ -18,7 +18,7 @@ Sub ChangeUserInfo()
     
     ' Extract the directory path from the original file path
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
-
+    
     ' Set the output file path and name
     newMirrorUser = InputBox("Enter the value for MIRRORUSER:", "MIRRORUSER Value")
     outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
@@ -35,6 +35,12 @@ Sub ChangeUserInfo()
     
     ' Loop to create multiple users
     For i = 1 To numUsers
+        If i = 1 Then
+            ' Remove the "sub subSub1_()" and "end sub" statements from the first iteration
+            modifiedData = Replace(originalData, "sub subSub1_()", "") ' Remove "sub subSub1_()"
+            modifiedData = Replace(modifiedData, "end sub", "") ' Remove "end sub"
+        End If
+        
         ' Prompt the user to specify the new value for USERID
         newUserID = InputBox("Enter the new value for USERID (4 characters) for user " & i & ":", "New USERID")
         
@@ -47,7 +53,7 @@ Sub ChangeUserInfo()
         
         ' Read the original data from the file
         On Error Resume Next ' Ignore error if the original file doesn't exist
-        Set originalFile = CreateObject("Scripting.FileSystemObject").OpenTextFile(originalFilePath)
+        Open originalFilePath For Input As #1
         If Err.Number <> 0 Then
             MsgBox "Error: Unable to open the original file for reading. Please make sure the file exists."
             Close #fileNumber
@@ -55,8 +61,8 @@ Sub ChangeUserInfo()
         End If
         On Error GoTo 0 ' Turn off error handling
         
-        originalData = originalFile.ReadAll
-        originalFile.Close
+        originalData = Input$(LOF(1), #1)
+        Close #1
         
         ' Perform string replacement for USERID1, USERID2, USERNAME, TODAYDATE, and MIRRORUSER
         modifiedData = Replace(originalData, "USERID1", newUserID1) ' Replace USERID1
