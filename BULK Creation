@@ -12,6 +12,7 @@ Sub ChangeUserInfo()
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
+    Dim isFirstIteration As Boolean
     
     ' Hardcoded path for the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
@@ -35,11 +36,6 @@ Sub ChangeUserInfo()
     
     ' Loop to create multiple users
     For i = 1 To numUsers
-        ' Remove the 'Sub subSub1_()' if it's not the first iteration
-        If i > 1 Then
-            modifiedData = Replace(modifiedData, "Sub subSub1_()", "")
-        End If
-        
         ' Prompt the user to specify the new value for USERID
         newUserID = InputBox("Enter the new value for USERID (4 characters) for user " & i & ":", "New USERID")
         
@@ -70,13 +66,24 @@ Sub ChangeUserInfo()
         modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
         modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
         
-        ' Remove the 'End Sub' if it's not the last iteration
-        If i < numUsers Then
-            modifiedData = Replace(modifiedData, "End Sub", "")
+        ' Remove "sub subSub1_()" at the start of the second iteration
+        If i = 2 Then
+            modifiedData = Replace(modifiedData, "sub subSub1_()", "")
+        End If
+        
+        ' Remove "end sub" at the end of the first iteration
+        isFirstIteration = (i = 1)
+        If isFirstIteration Then
+            modifiedData = Replace(modifiedData, "end sub", "")
         End If
         
         ' Append the modified data to the output file
         Print #fileNumber, modifiedData
+        
+        ' Add "end sub" at the end of the last iteration
+        If i = numUsers Then
+            Print #fileNumber, "end sub"
+        End If
         
         ' Inform the user
         MsgBox "Data for user " & i & " replaced and appended to the output file."
