@@ -2,14 +2,18 @@ Option Explicit
 
 Sub ModifyMacFile()
     Dim numIterations As Integer
-    Dim newMirrorUser As String
+    Dim i As Integer
+    Dim newUserID1 As String
+    Dim newUserID2 As String
+    Dim newUsername As String
     Dim newDate As String
+    Dim newMirrorUser As String
     Dim originalFilePath As String
+    Dim newFilePath As String
     Dim fileNumber As Integer
     Dim originalData As String
     Dim modifiedData As String
     Dim directoryPath As String
-    Dim i As Integer
     
     ' Prompt the user for the number of iterations
     numIterations = InputBox("Enter the number of times you want to run the modification:", "Number of Iterations")
@@ -18,35 +22,49 @@ Sub ModifyMacFile()
         Exit Sub
     End If
     
-    ' Prompt the user for MIRRORUSER and TODAYDATE
+    ' Prompt the user to specify MIRRORUSER and TODAYDATE
     newMirrorUser = InputBox("Enter the new value for MIRRORUSER:", "New MIRRORUSER")
     newDate = InputBox("Enter today's date in YYYYMMDD format:", "Today's Date")
     
-    ' Hardcoded original file path
+    ' Prompt the user to specify the original file
     originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
+    If Dir(originalFilePath) = "" Then
+        MsgBox "Original file not found. Please make sure the file exists.", vbExclamation
+        Exit Sub
+    End If
     
     ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
     
+    ' Read the original data from the file
+    Open originalFilePath For Input As #1
+    originalData = Input$(LOF(1), #1)
+    Close #1
+    
+    ' Perform string replacement for MIRRORUSER and TODAYDATE
+    modifiedData = Replace(originalData, "MIRRORUSER", newMirrorUser)
+    modifiedData = Replace(modifiedData, "TODAYDATE", newDate)
+    
+    ' Prompt the user to specify the new values for USERID for each iteration
     For i = 1 To numIterations
-        ' Create the new filename based on the MIRRORUSER value and iteration number
-        Dim newFileName As String
-        newFileName = directoryPath & Replace(newMirrorUser & "BULK" & i, " ", "_") & ".mac"
+        newUserID1 = InputBox("Enter the new value for USERID1 (2 characters) - Iteration " & i & ":", "New USERID1")
+        newUserID2 = InputBox("Enter the new value for USERID2 (2 characters) - Iteration " & i & ":", "New USERID2")
+        newUsername = InputBox("Enter the new value for USERNAME - Iteration " & i & ":", "New USERNAME")
         
-        ' Read the original data from the file
-        Open originalFilePath For Input As #1
-        originalData = Input$(LOF(1), #1)
-        Close #1
-        
-        ' Perform string replacement for USERID, USERNAME, TODAYDATE, and MIRRORUSER
-        modifiedData = Replace(originalData, "USERID1", Mid(newMirrorUser, 1, 2))
-        modifiedData = Replace(modifiedData, "USERID2", Mid(newMirrorUser, 3, 2))
-        modifiedData = Replace(modifiedData, "TODAYDATE", newDate)
-        modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser)
+        ' Perform string replacement for USERID1 and USERID2
+        modifiedData = Replace(modifiedData, "USERID1", newUserID1)
+        modifiedData = Replace(modifiedData, "USERID2", newUserID2)
         
         ' Save the modified data to the new file
-        fileNumber = FreeFile
-        Open newFileName For Output As #fileNumber
+        newFilePath = directoryPath & Replace(newMirrorUser & "BULK", " ", "_") & ".mac"
+        If i > 1 Then
+            ' Append the modified data to the existing file
+            Open newFilePath For Append As #fileNumber
+        Else
+            ' Create a new file for the first iteration
+            fileNumber = FreeFile
+            Open newFilePath For Output As #fileNumber
+        End If
         Print #fileNumber, modifiedData
         Close #fileNumber
     Next i
