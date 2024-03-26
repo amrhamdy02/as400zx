@@ -14,11 +14,11 @@ Sub ChangeUserInfo()
     Dim directoryPath As String
     
     ' Hardcoded path for the original file
-    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Create_new_user.mac"
+    originalFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Changerole.mac"
     
     ' Extract the directory path from the original file path
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
-
+    
     ' Prompt the user to specify the number of users to create
     numUsers = InputBox("Enter the number of users you want to create:", "Number of Users")
     
@@ -32,8 +32,14 @@ Sub ChangeUserInfo()
     outputFile = directoryPath & Replace(newMirrorUser, " ", "_") & ".mac"
     
     ' Open the output file
+    On Error Resume Next
     fileNumber = FreeFile
     Open outputFile For Output As #fileNumber
+    If Err.Number <> 0 Then
+        MsgBox "Error: Unable to open the output file for writing. Please make sure the path is correct and you have permission to write to the file."
+        Exit Sub
+    End If
+    On Error GoTo 0
     
     ' Loop to create multiple users
     For i = 1 To numUsers
