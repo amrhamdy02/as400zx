@@ -1,4 +1,4 @@
-Sub RunMacroMultipleTimes()
+Sub EditMacroParametersAndSave()
     Dim macroText As String
     Dim newUserID1 As String
     Dim newUserID2 As String
@@ -6,6 +6,8 @@ Sub RunMacroMultipleTimes()
     Dim newMirrorUser As String
     Dim newTodayDate As String
     Dim originalFilePath As String
+    Dim newFilePath As String
+    Dim modifiedMacroText As String
     
     ' Set new values for placeholders
     newUserID1 = "NewUserID1"
@@ -21,14 +23,19 @@ Sub RunMacroMultipleTimes()
     macroText = ReadMacroFromFile(originalFilePath)
     
     ' Replace placeholders with new values
-    macroText = Replace(macroText, "USERID1", newUserID1)
-    macroText = Replace(macroText, "USERID2", newUserID2)
-    macroText = Replace(macroText, "USERNAME", newUsername)
-    macroText = Replace(macroText, "MIRRORUSER", newMirrorUser)
-    macroText = Replace(macroText, "TODAYDATE", newTodayDate)
+    modifiedMacroText = Replace(macroText, "USERID1", newUserID1)
+    modifiedMacroText = Replace(modifiedMacroText, "USERID2", newUserID2)
+    modifiedMacroText = Replace(modifiedMacroText, "USERNAME", newUsername)
+    modifiedMacroText = Replace(modifiedMacroText, "MIRRORUSER", newMirrorUser)
+    modifiedMacroText = Replace(modifiedMacroText, "TODAYDATE", newTodayDate)
     
-    ' Run the modified macro
-    RunMacro macroText
+    ' Specify the path for the new file
+    newFilePath = "C:\Users\ammohamed\AppData\Roaming\IBM\Client Access\Emulator\private\Modified_macro.mac"
+    
+    ' Save the modified macro text to the new file
+    WriteMacroToFile modifiedMacroText, newFilePath
+    
+    MsgBox "Modified macro saved to: " & newFilePath
 End Sub
 
 Function ReadMacroFromFile(filePath As String) As String
@@ -48,10 +55,16 @@ Function ReadMacroFromFile(filePath As String) As String
     ReadMacroFromFile = fileContent
 End Function
 
-Sub RunMacro(macroText As String)
-    ' Paste your macro code here
-    ' For example:
-    ' Application.Run "YourMacroName"
-    ' or execute the macro text directly
-    ' Application.ExecuteExcel4Macro macroText
+Sub WriteMacroToFile(macroText As String, filePath As String)
+    Dim fileNum As Integer
+    
+    ' Open the file for writing
+    fileNum = FreeFile
+    Open filePath For Output As fileNum
+    
+    ' Write the modified macro text to the file
+    Print #fileNum, macroText
+    
+    ' Close the file
+    Close fileNum
 End Sub
