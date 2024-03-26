@@ -31,4 +31,41 @@ Sub ChangeUserInfo()
     ' Get the directory path of the original file
     directoryPath = Left(originalFilePath, InStrRev(originalFilePath, "\"))
     
-    '
+    ' Open the output file
+    fileNumber = FreeFile
+    Open outputFile For Output As #fileNumber
+    
+    ' Loop to create multiple users
+    For i = 1 To numUsers
+        ' Prompt the user to specify the new value for USERID
+        newUserID = InputBox("Enter the new value for USERID (4 characters) for user " & i & ":", "New USERID")
+        
+        ' Splitting USERID into two parts
+        newUserID1 = Left(newUserID, 2)
+        newUserID2 = Right(newUserID, 2)
+        
+        ' Prompt the user to specify the new value for USERNAME
+        newUsername = InputBox("Enter the new value for USERNAME for user " & i & ":", "New USERNAME")
+        
+        ' Read the original data from the file
+        Open originalFilePath For Input As #1
+        originalData = Input$(LOF(1), #1)
+        Close #1
+        
+        ' Perform string replacement for USERID1, USERID2, USERNAME, TODAYDATE, and MIRRORUSER
+        modifiedData = Replace(originalData, "USERID1", newUserID1) ' Replace USERID1
+        modifiedData = Replace(modifiedData, "USERID2", newUserID2) ' Replace USERID2
+        modifiedData = Replace(modifiedData, "USERNAME", newUsername) ' Replace USERNAME
+        modifiedData = Replace(modifiedData, "TODAYDATE", newDate) ' Replace TODAYDATE
+        modifiedData = Replace(modifiedData, "MIRRORUSER", newMirrorUser) ' Replace MIRRORUSER
+        
+        ' Append the modified data to the output file
+        Print #fileNumber, modifiedData
+        
+        ' Inform the user
+        MsgBox "Data for user " & i & " replaced and appended to the output file."
+    Next i
+    
+    ' Close the output file
+    Close #fileNumber
+End Sub
